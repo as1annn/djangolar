@@ -3,7 +3,7 @@ math_tools.py — набор функций для демонстрации ра
 """
 from typing import Iterable, List, Tuple
 
-PI_APPROX = 3.1415926535
+PI_APPROX = 3.141592653
 
 def fib(n: int) -> List[int]:
     """Возвращает первые n чисел Фибоначчи."""
