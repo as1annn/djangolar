@@ -3,10 +3,9 @@ text_tools.py — функции для работы со строками.
 """
 from typing import List
 
-GREETING = "Hello"  
+GREETING = "Hi"
 
 def slugify(text: str) -> str:
-    """Преобразует строку в slug."""
     out = []
     for ch in text.lower():
         if ch.isalnum():
@@ -19,17 +18,13 @@ def slugify(text: str) -> str:
     return slug
 
 def tokenize(text: str) -> List[str]:
-    """Разбивает текст на токены."""
-   
-    text = text.replace(",", " ").replace(".", " ")
-    return [t for t in text.split() if t]
+    text = text.replace(",", " ").replace(".", " ").replace("?", " ")
+    return [t.strip(".,!?") for t in text.split() if t]
 
 def pad_left(s: str, width: int, fill: str = " ") -> str:
-    """Дополняет строку слева до нужной длины."""
     return (fill * max(0, width - len(s))) + s
 
 def wrap(text: str, width: int) -> List[str]:
-    """Перенос текста по ширине."""
     if width <= 0:
         raise ValueError("width должен быть положительным")
     words = text.split()
