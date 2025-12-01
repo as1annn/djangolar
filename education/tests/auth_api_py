@@ -1,0 +1,48 @@
+import pytest
+from django.contrib.auth import get_user_model
+from rest_framework import status
+from rest_framework.test import APIClient
+
+User = get_user_model()
+
+
+@pytest.fixture
+def client():
+    return APIClient()
+
+
+@pytest.fixture
+def user(db):
+    return User.objects.create_user(username="jwtuser", password="password123")
+
+
+def test_obtain_token_success(client, user):
+    url = "/api/token/"
+    resp = client.post(url, {"username": "jwtuser", "password": "password123"}, format="json")
+    assert resp.status_code == status.HTTP_200_OK
+    assert "access" in resp.data
+    assert "refresh" in resp.data
+
+
+def test_obtain_token_bad_credentials(client):
+    url = "/api/token/"
+    resp = client.post(url, {"username": "wrong", "password": "wrong"}, format="json")
+    assert resp.status_code == status.HTTP_401_UNAUTHORIZED
+
+
+def test_refresh_token_success(client, user):
+    obtain_url = "/api/token/"
+    refresh_url = "/api/token/refresh/"
+
+    obtain_resp = client.post(obtain_url, {"username": "jwtuser", "password": "password123"}, format="json")
+    refresh = obtain_resp.data["refresh"]
+
+    resp = client.post(refresh_url, {"refresh": refresh}, format="json")
+    assert resp.status_code == status.HTTP_200_OK
+    assert "access" in resp.data
+
+
+def test_refresh_token_invalid(client):
+    url = "/api/token/refresh/"
+    resp = client.post(url, {"refresh": "invalidtoken"}, format="json")
+    assert resp.status_code == status.HTTP_401_UNAUTHORIZED
