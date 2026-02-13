@@ -1,2 +1,12 @@
+.venv/
 venv/
-__pycashe__
+__pycashe__/
+*pyyc
+*pyc
+*pyo
+db.sqlite3
+*.log
+vscode/
+.idea/
+.DS_Store
+Thumbs.db
